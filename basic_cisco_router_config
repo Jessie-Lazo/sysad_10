@@ -1,0 +1,43 @@
+---
+- name: Basic Cisco Router Configuration
+  hosts: cisco_routers
+  gather_facts: no
+  connection: network_cli
+
+  tasks:
+    - name: Set hostname
+      cisco.ios.ios_config:
+        lines:
+          - hostname R1
+
+    - name: Set enable secret
+      cisco.ios.ios_config:
+        lines:
+          - enable secret mysecretpassword
+
+    - name: Configure console line password
+      cisco.ios.ios_config:
+        lines:
+          - line console 0
+          - password consolepass
+          - login
+
+    - name: Configure VTY lines
+      cisco.ios.ios_config:
+        lines:
+          - line vty 0 4
+          - password vtypass
+          - login
+          - transport input ssh
+
+    - name: Set interface IP and enable it
+      cisco.ios.ios_config:
+        lines:
+          - interface GigabitEthernet0/0
+          - ip address 192.168.56.100 255.255.255.0
+          - no shutdown
+
+    - name: Set default route
+      cisco.ios.ios_config:
+        lines:
+          - ip route 0.0.0.0 0.0.0.0 192.168.56.1
